@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
-PATH_TO_SAVE = "../data/articles/"
 # URL of the research paper
 url = 'https://www.nature.com/articles/s41467-024-49237-6'  # URL of the research paper
 
@@ -98,7 +97,7 @@ article_data = {
 }
 
 # Save to JSON file
-with open(f'{PATH_TO_SAVE}article_data.json', 'w', encoding='utf-8') as json_file:
+with open('../data/articles/article_data.json', 'w', encoding='utf-8') as json_file:
     json.dump(article_data, json_file, ensure_ascii=False, indent=4)
 
 

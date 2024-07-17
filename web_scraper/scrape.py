@@ -42,8 +42,8 @@ def scrape_category(category):
     # Ensure the data directory exists
     os.makedirs('data', exist_ok=True)
 
-    # Save the DataFrame to a CSV file in the data folder
-    json_filename = f"nature_{category.replace('-', '_')}.json"
+    # Save the DataFrame to a JSON file in the data folder
+    json_filename = f"../data/categories/nature_{category.replace('-', '_')}.json"
     json_path = os.path.join('../data', json_filename)
 
     with open(json_path, 'w', encoding='utf-8') as f:
