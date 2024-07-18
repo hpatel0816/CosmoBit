@@ -4,6 +4,7 @@ import logging
 
 from web_scraper.category_scraper import CategoryScraper
 from web_scraper.article_scraper import ArticleScraper
+from data_processing.process import process_all_articles
 
 NATURE_BASE_URL = "https://www.nature.com/subjects/"
 CATEGORIES = ["astronomy-and-planetary-science", "space-physics"]
@@ -31,21 +32,27 @@ if __name__ == "__main__":
                 logging.info(f"Category data saved to {json_file_path}")
 
                 for article in articles:
-                    try:
-                        article_url = article['Link']
-                        is_open_access = article['OpenAccess']
-                        logging.info(f"Scraping article: {article_url}")
-                        article_data = article_scraper.scrape_article(article_url, is_open_access)
-                        if article_data:
-                            article_id = article_url.split('/')[-1]
-                            article_json_path = f"article_{article_id}_data.json"
-                            save_to_json(article_data, article_json_path)
-                            logging.info(f"Article data saved to {article_json_path}")
-                            # Wait 1.5 seconds before scraping the next article
-                        time.sleep(1)
-                    except Exception as e:
-                        logging.error(f"Failed to scrape the {article} article. Error: {e}")
+                    if article['Type'] == 'Research':
+                        try:
+                            article_url = article['Link']
+                            is_open_access = article['OpenAccess']
+                            logging.info(f"Scraping article: {article_url}")
+                            article_data = article_scraper.scrape_article(article_url, is_open_access)
+                            if article_data:
+                                article_id = article_url.split('/')[-1]
+                                article_json_path = f"articles/article_{article_id}_data.json"
+                                save_to_json(article_data, article_json_path)
+                                logging.info(f"Article data saved to {article_json_path}")
+                                # Wait 1.5 seconds before scraping the next article
+                            time.sleep(1)
+                        except Exception as e:
+                            logging.error(f"Failed to scrape the {article} article. Error: {e}")
             # Wait 5 seconds before scraping the next category
             time.sleep(5)
         except Exception as e:
             logging.error(f"Failed to scrape the {category} category. Error: {e}")
+    
+    # Process all scraped articles
+    logging.info("Processing all scraped articles")
+    process_all_articles('articles', 'processed_articles')
+    logging.info("All articles processed")
