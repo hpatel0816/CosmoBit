@@ -32,6 +32,7 @@ if __name__ == "__main__":
                 logging.info(f"Category data saved to {json_file_path}")
 
                 for article in articles:
+                    # TODO: Setup scraping and processing for other types of data (News, Highlights, etc)
                     if article['Type'] == 'Research':
                         try:
                             article_url = article['Link']
