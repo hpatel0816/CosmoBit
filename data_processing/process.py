@@ -1,33 +1,22 @@
-import re
 import json
+import logging
+import os
 
-def clean_text(text):
-    # Replace newline characters with appropriate punctuation
-    text = re.sub(r'(?<=\w)\n(?=\w)', '. ', text)  # Insert '. ' if no space on either side
-    text = re.sub(r'\n+', ' ', text)  # Replace other newlines with space
-    # Remove spaces before punctuation
-    text = re.sub(r'\s+([.,;:?!])', r'\1', text)
-    # Replace multiple spaces with a single space
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
+from .regex_parsers import clean_text, handle_newlines_and_references, format_figures, structure_text
 
-def handle_newlines_and_references(text):
-    # Remove numbers that have \n before and after them directly
-    text = re.sub(r'\n\d+\n', '', text)
-    # Replace newlines separating numbers or references with spaces
-    text = re.sub(r'\s*\n\s*(\d+)\s*\n\s*', r' \1, ', text)
-    return text
 
-def format_figures(text):
-    # Replace figure references with "Figure #" and ensure correct formatting
-    text = re.sub(r'\(Fig\.?\s*\n?\d+\n?\)', lambda match: f"(Fig. {re.search(r'\d+', match.group()).group()})", text)
-    return text
-
-def structure_text(text):
-    # Replace specific patterns with new lines or bullet points for lists
-    text = re.sub(r'(?<=\w)\s{2,}(?=\w)', '\n\n', text)  # Paragraph breaks
-    text = re.sub(r'\n+', '\n', text)  # Single newline
-    return text
+def process_all_articles(input_dir, output_dir):
+    os.makedirs(output_dir, exist_ok=True)
+    for file_name in os.listdir(input_dir):
+        if file_name.endswith('.json'):
+            file_path = os.path.join(input_dir, file_name)
+            with open(file_path, 'r', encoding='utf-8') as f:
+                article_data = json.load(f)
+            processed_data = process_article_data(article_data)
+            output_file_path = os.path.join(output_dir, file_name)
+            with open(output_file_path, 'w', encoding='utf-8') as f:
+                json.dump(processed_data, f, ensure_ascii=False, indent=4)
+            logging.info(f"Processed data saved to {output_file_path}")
 
 
 def process_article_data(article_data):
@@ -42,11 +31,3 @@ def process_article_data(article_data):
         processed_data[key] = cleaned_text
     return processed_data
 
-
-with open("../data/articles/raw_data/article_data.json", "r") as file:
-    jsonData = json.load(file)
-
-processed_data = process_article_data(jsonData)
-
-with open('../data/articles/processed/article.json', 'w') as file:
-    json.dump(processed_data, file)
