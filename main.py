@@ -6,7 +6,7 @@ from web_scraper.category_scraper import CategoryScraper
 from web_scraper.article_scraper import ArticleScraper
 
 NATURE_BASE_URL = "https://www.nature.com/subjects/"
-CATEGORIES = ["astronomy-and-planetary-science"]
+CATEGORIES = ["astronomy-and-planetary-science", "space-physics"]
 
 def save_to_json(data, file_path):
     with open(file_path, 'w', encoding='utf-8') as f:
